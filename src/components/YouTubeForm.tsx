@@ -22,7 +22,7 @@ const YouTubeForm = () => {
   return (
     <div>
       <h1>YouTube Form ({renderCount / 2})</h1>
-      <form onSubmit={handleSubmit(formSubmithandler)}>
+      <form onSubmit={handleSubmit(formSubmithandler)} noValidate>
         <div className="form-control">
           <label htmlFor="username">Username</label>
           <input
@@ -39,7 +39,35 @@ const YouTubeForm = () => {
         </div>
         <div className="form-control">
           <label htmlFor="email">Email</label>
-          <input type="email" id="email" {...register("email")} />
+          <input
+            type="email"
+            id="email"
+            {...register("email", {
+              required: {
+                value: true,
+                message: "Email is required!",
+              },
+              pattern: {
+                value:
+                  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                message: "Invalid email format",
+              },
+              validate: {
+                notAdmin: (fieldValue) => {
+                  return (
+                    fieldValue !== "admin@example.com" ||
+                    "Enter a different email address"
+                  );
+                },
+                notBlackListed: (fieldValue) => {
+                  return (
+                    !fieldValue.endsWith("baddomain.com") ||
+                    "This domain is not supported"
+                  );
+                },
+              },
+            })}
+          />
           <p className="error">{errors?.email?.message}</p>
         </div>
         <div className="form-control">
