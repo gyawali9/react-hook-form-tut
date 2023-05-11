@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 
 let renderCount = 0;
@@ -11,6 +11,11 @@ type FormValues = {
     twitter: string;
     facebook: string;
   };
+  // implementing array
+  phoneNumbers: string[];
+  phNumbers: {
+    number: string;
+  }[];
 };
 
 const YouTubeForm = () => {
@@ -28,6 +33,8 @@ const YouTubeForm = () => {
         twitter: "",
         facebook: "",
       },
+      phoneNumbers: ["", ""],
+      phNumbers: [{ number: "" }],
     },
 
     // fload saved data (here: email form api)
@@ -41,9 +48,13 @@ const YouTubeForm = () => {
     //   }
     // }
   });
+  const { fields, append, remove } = useFieldArray({
+    name: "phNumbers",
+    control,
+  });
 
   const formSubmithandler = (data: FormValues) => {
-    alert(data)
+    alert(data);
     console.log("form submitted", data);
     // alert(JSON.stringify(data));
   };
@@ -114,6 +125,46 @@ const YouTubeForm = () => {
         <div className="form-control">
           <label htmlFor="facebook">Facebook</label>
           <input type="text" id="facebook" {...register("social.facebook")} />
+        </div>
+        <div className="form-control">
+          <label htmlFor="primary-phone">Primary Phone Number</label>
+          <input
+            type="text"
+            id="primary-phone"
+            {...register("phoneNumbers.0")}
+          />
+        </div>
+        <div className="form-control">
+          <label htmlFor="secondary-phone">Secondary Phone Number</label>
+          {/* dot notation should be used instead of [] notation */}
+          <input
+            type="text"
+            id="secondary-phone"
+            {...register("phoneNumbers.1")}
+          />
+        </div>
+        <div>
+          <label htmlFor="">List of phone numbers</label>
+          <div>
+            {fields.map((field, index) => {
+              return (
+                <div className="form-control" key={field.id}>
+                  <input
+                    type="text"
+                    {...register(`phNumbers.${index}.number` as const)}
+                  />
+                  {index > 0 && (
+                    <button type="button" onClick={() => remove(index)}>
+                      Remove
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+            <button type="button" onClick={() => append({ number: "" })}>
+              Add
+            </button>
+          </div>
         </div>
 
         <button>Submit</button>
