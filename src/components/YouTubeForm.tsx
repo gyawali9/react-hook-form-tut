@@ -14,7 +14,24 @@ const YouTubeForm = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({
+    defaultValues: {
+      username: "",
+      email: "",
+      channel: "",
+    },
+
+    // fload saved data (here: email form api)
+    // defaultValues : async()=>{
+    //   const response = await fetch("https://jsonplaceholder.typicode.com/users/1")
+    //   const data = await response.json()
+    //   return{
+    //     username: "Batman",
+    //     email: data.email,
+    //     channel: ""
+    //   }
+    // }
+  });
 
   const formSubmithandler = (data: FormValues) => {
     console.log("form submitted", data);
