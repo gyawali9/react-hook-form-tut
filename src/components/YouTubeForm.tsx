@@ -6,6 +6,11 @@ type FormValues = {
   username: string;
   email: string;
   channel: string;
+  // implementing nested object
+  social: {
+    twitter: string;
+    facebook: string;
+  };
 };
 
 const YouTubeForm = () => {
@@ -19,6 +24,10 @@ const YouTubeForm = () => {
       username: "",
       email: "",
       channel: "",
+      social: {
+        twitter: "",
+        facebook: "",
+      },
     },
 
     // fload saved data (here: email form api)
@@ -34,7 +43,9 @@ const YouTubeForm = () => {
   });
 
   const formSubmithandler = (data: FormValues) => {
+    alert(data)
     console.log("form submitted", data);
+    // alert(JSON.stringify(data));
   };
   return (
     <div>
@@ -95,6 +106,14 @@ const YouTubeForm = () => {
             {...register("channel", { required: "Channel is required!" })}
           />
           <p className="error">{errors?.channel?.message}</p>
+        </div>
+        <div className="form-control">
+          <label htmlFor="twitter"> Twitter</label>
+          <input type="text" id="twitter" {...register("social.twitter")} />
+        </div>
+        <div className="form-control">
+          <label htmlFor="facebook">Facebook</label>
+          <input type="text" id="facebook" {...register("social.facebook")} />
         </div>
 
         <button>Submit</button>
