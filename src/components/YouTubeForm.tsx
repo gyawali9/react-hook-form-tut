@@ -17,7 +17,7 @@ type FormValues = {
     number: string;
   }[];
   age: number;
-  dob: Date,
+  dob: Date;
 };
 
 const YouTubeForm = () => {
@@ -25,10 +25,13 @@ const YouTubeForm = () => {
     register,
     control,
     handleSubmit,
+    watch,
+    getValues,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
-      username: "",
+      username: "Roshan",
       email: "",
       channel: "",
       social: {
@@ -38,7 +41,7 @@ const YouTubeForm = () => {
       phoneNumbers: ["", ""],
       phNumbers: [{ number: "" }],
       age: 0,
-      dob: new Date()
+      dob: new Date(),
     },
 
     // fload saved data (here: email form api)
@@ -62,9 +65,23 @@ const YouTubeForm = () => {
     console.log("form submitted", data);
     // alert(JSON.stringify(data));
   };
+  const handleGetValues = () => {
+    // getValues is useful method or retrieving formValues when specific action is perfored: clicking a button
+    console.log("Get values", getValues());
+    console.log("Get values in array", getValues(["username", "channel"]));
+  };
+  const handleSetValue = () => {
+    setValue("username", "", {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  };
+  const watchUserName = watch("username");
   return (
     <div>
-      <h1>YouTube Form ({renderCount / 2})</h1>
+      <h1>Form ({renderCount / 2})</h1>
+      <h1>User Name: {watchUserName}</h1>
       <form onSubmit={handleSubmit(formSubmithandler)} noValidate>
         <div className="form-control">
           <label htmlFor="username">Username</label>
@@ -187,19 +204,27 @@ const YouTubeForm = () => {
         </div>
         <div className="form-control">
           <label htmlFor="">Date of Birth</label>
-          <input type="date" id="dob"
-          {...register("dob",{
-            valueAsDate: true,
-            required: {
-              value: true,
-              message: "Date of birth is required"
-            }
-          })}
+          <input
+            type="date"
+            id="dob"
+            {...register("dob", {
+              valueAsDate: true,
+              required: {
+                value: true,
+                message: "Date of birth is required",
+              },
+            })}
           />
           <p className="error">{errors?.dob?.message}</p>
         </div>
 
         <button>Submit</button>
+        <button type="button" onClick={handleGetValues}>
+          Get Values
+        </button>
+        <button type="button" onClick={handleSetValue}>
+          Set Values
+        </button>
       </form>
       <DevTool control={control} />
     </div>
