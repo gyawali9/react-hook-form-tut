@@ -28,7 +28,7 @@ const YouTubeForm = () => {
     watch,
     getValues,
     setValue,
-    formState: { errors },
+    formState: { errors, touchedFields, dirtyFields, isDirty },
   } = useForm<FormValues>({
     defaultValues: {
       username: "Roshan",
@@ -44,7 +44,7 @@ const YouTubeForm = () => {
       dob: new Date(),
     },
 
-    // fload saved data (here: email form api)
+    // load saved data (here: email form api)
     // defaultValues : async()=>{
     //   const response = await fetch("https://jsonplaceholder.typicode.com/users/1")
     //   const data = await response.json()
@@ -55,6 +55,8 @@ const YouTubeForm = () => {
     //   }
     // }
   });
+  console.log(touchedFields, dirtyFields, isDirty, "formState");
+  // isDIrty represents the state of form itself and not an individual field
   const { fields, append, remove } = useFieldArray({
     name: "phNumbers",
     control,
@@ -77,11 +79,15 @@ const YouTubeForm = () => {
       shouldTouch: true,
     });
   };
-  const watchUserName = watch("username");
+  // const watchUserName = watch("username");
   return (
     <div>
       <h1>Form ({renderCount / 2})</h1>
-      <h1>User Name: {watchUserName}</h1>
+      <h1>
+        User Name:
+        {/* {watchUserName} */}
+        {watch("username")}
+      </h1>
       <form onSubmit={handleSubmit(formSubmithandler)} noValidate>
         <div className="form-control">
           <label htmlFor="username">Username</label>
@@ -141,7 +147,13 @@ const YouTubeForm = () => {
         </div>
         <div className="form-control">
           <label htmlFor="twitter"> Twitter</label>
-          <input type="text" id="twitter" {...register("social.twitter")} />
+          <input
+            type="text"
+            id="twitter"
+            {...register("social.twitter", {
+              disabled: watch("channel") === "" ? true : false,
+            })}
+          />
         </div>
         <div className="form-control">
           <label htmlFor="facebook">Facebook</label>
