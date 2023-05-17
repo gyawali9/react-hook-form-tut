@@ -1,4 +1,4 @@
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, FieldErrors } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 
 let renderCount = 0;
@@ -28,7 +28,7 @@ const YouTubeForm = () => {
     watch,
     getValues,
     setValue,
-    formState: { errors },
+    formState: { errors, touchedFields, dirtyFields, isDirty, isValid },
   } = useForm<FormValues>({
     defaultValues: {
       username: "Roshan",
@@ -44,7 +44,7 @@ const YouTubeForm = () => {
       dob: new Date(),
     },
 
-    // fload saved data (here: email form api)
+    // load saved data (here: email form api)
     // defaultValues : async()=>{
     //   const response = await fetch("https://jsonplaceholder.typicode.com/users/1")
     //   const data = await response.json()
@@ -55,15 +55,20 @@ const YouTubeForm = () => {
     //   }
     // }
   });
+  console.log(touchedFields, dirtyFields, isDirty, isValid, "formState");
+  // isDIrty represents the state of form itself and not an individual field
   const { fields, append, remove } = useFieldArray({
     name: "phNumbers",
     control,
   });
 
-  const formSubmithandler = (data: FormValues) => {
+  const onSubmit = (data: FormValues) => {
     alert(data);
     console.log("form submitted", data);
     // alert(JSON.stringify(data));
+  };
+  const onError = (errors: FieldErrors<FormValues>) => {
+    console.log(errors);
   };
   const handleGetValues = () => {
     // getValues is useful method or retrieving formValues when specific action is perfored: clicking a button
@@ -77,12 +82,16 @@ const YouTubeForm = () => {
       shouldTouch: true,
     });
   };
-  const watchUserName = watch("username");
+  // const watchUserName = watch("username");
   return (
     <div>
       <h1>Form ({renderCount / 2})</h1>
-      <h1>User Name: {watchUserName}</h1>
-      <form onSubmit={handleSubmit(formSubmithandler)} noValidate>
+      <h1>
+        User Name:
+        {/* {watchUserName} */}
+        {watch("username")}
+      </h1>
+      <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
         <div className="form-control">
           <label htmlFor="username">Username</label>
           <input
@@ -141,7 +150,13 @@ const YouTubeForm = () => {
         </div>
         <div className="form-control">
           <label htmlFor="twitter"> Twitter</label>
-          <input type="text" id="twitter" {...register("social.twitter")} />
+          <input
+            type="text"
+            id="twitter"
+            {...register("social.twitter", {
+              disabled: watch("channel") === "" ? true : false,
+            })}
+          />
         </div>
         <div className="form-control">
           <label htmlFor="facebook">Facebook</label>
@@ -218,7 +233,7 @@ const YouTubeForm = () => {
           <p className="error">{errors?.dob?.message}</p>
         </div>
 
-        <button>Submit</button>
+        <button disabled={!isDirty || !isValid}>Submit</button>
         <button type="button" onClick={handleGetValues}>
           Get Values
         </button>
