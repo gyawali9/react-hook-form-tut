@@ -28,7 +28,7 @@ const YouTubeForm = () => {
     watch,
     getValues,
     setValue,
-    formState: { errors, touchedFields, dirtyFields, isDirty },
+    formState: { errors, touchedFields, dirtyFields, isDirty, isValid },
   } = useForm<FormValues>({
     defaultValues: {
       username: "Roshan",
@@ -55,7 +55,7 @@ const YouTubeForm = () => {
     //   }
     // }
   });
-  console.log(touchedFields, dirtyFields, isDirty, "formState");
+  console.log(touchedFields, dirtyFields, isDirty, isValid, "formState");
   // isDIrty represents the state of form itself and not an individual field
   const { fields, append, remove } = useFieldArray({
     name: "phNumbers",
@@ -233,7 +233,7 @@ const YouTubeForm = () => {
           <p className="error">{errors?.dob?.message}</p>
         </div>
 
-        <button>Submit</button>
+        <button disabled={!isDirty || !isValid}>Submit</button>
         <button type="button" onClick={handleGetValues}>
           Get Values
         </button>
