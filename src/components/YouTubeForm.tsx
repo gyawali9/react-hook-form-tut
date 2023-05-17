@@ -1,4 +1,4 @@
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, FieldErrors } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 
 let renderCount = 0;
@@ -62,10 +62,13 @@ const YouTubeForm = () => {
     control,
   });
 
-  const formSubmithandler = (data: FormValues) => {
+  const onSubmit = (data: FormValues) => {
     alert(data);
     console.log("form submitted", data);
     // alert(JSON.stringify(data));
+  };
+  const onError = (errors: FieldErrors<FormValues>) => {
+    console.log(errors);
   };
   const handleGetValues = () => {
     // getValues is useful method or retrieving formValues when specific action is perfored: clicking a button
@@ -88,7 +91,7 @@ const YouTubeForm = () => {
         {/* {watchUserName} */}
         {watch("username")}
       </h1>
-      <form onSubmit={handleSubmit(formSubmithandler)} noValidate>
+      <form onSubmit={handleSubmit(onSubmit, onError)} noValidate>
         <div className="form-control">
           <label htmlFor="username">Username</label>
           <input
